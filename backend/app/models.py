@@ -84,7 +84,7 @@ class CustomUser(AbstractUser):
     
     senha_gov = models.CharField(
         'SenhaGov',
-        max_length=10,
+        max_length=128,
         blank=True,
         null=True
     )

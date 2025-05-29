@@ -4,36 +4,59 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Logo from '@../../../public/mul.avif'
+import Link from 'next/link'
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  e.preventDefault()
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-      const data = await res.json()
+    const data = await res.json()
 
-      if (!res.ok) {
-        setError('Usuário ou senha inválidos')
-        return
-      }
-
-      localStorage.setItem('token', data.access)
-      router.push('/demandas')
-    } catch {
-      setError('Erro ao conectar com o servidor')
+    if (!res.ok) {
+      setError('Usuário ou senha inválidos')
+      return
     }
+
+    // Salva o token
+    localStorage.setItem('token', data.access)
+
+    // Busca os dados do usuário usando o token
+    console.log('🔄 Buscando dados do usuário...')
+    const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/users/me/`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${data.access}`,
+      },
+    })
+    console.log('✅ Dados do usuário recebidos')
+
+    const userData = await userRes.json()
+
+    if (!userRes.ok) {
+      setError('Erro ao buscar dados do usuário')
+      return
+    }
+
+    // Salva os dados do usuário no localStorage
+    localStorage.setItem('user', JSON.stringify(userData))
+
+    router.push('/demandas')
+  } catch {
+    setError('Erro ao conectar com o servidor')
   }
+}
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -50,19 +73,19 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label htmlFor="username" className="text-slate-800 text-sm font-medium mb-2 block">
-                  Usuário
+                <label htmlFor="email" className="text-slate-800 text-sm font-medium mb-2 block">
+                  Email
                 </label>
                 <div className="relative flex items-center">
                   <input
-                    id="username"
-                    name="username"
-                    type="text"
+                    id="email"
+                    name="email"
+                    type="email"
                     required
-                    placeholder="Insira seu usuário aqui"
+                    placeholder="Insira seu email aqui"
                     className="w-full text-sm text-slate-800 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -106,10 +129,11 @@ export default function LoginPage() {
 
               <div className="flex flex-wrap items-center justify-between gap-4">
 
+                
                 <div className="text-sm">
-                  <a href="javascript:void(0);" className="text-[#963d40] hover:underline font-medium">
-                    Esqueceu a Senha?
-                  </a>
+                  <Link href='/forgot' className='text-[#963d40] hover:underline font-medium'>
+                Esqueceu a Senha?
+                </Link>
                 </div>
               </div>
 
@@ -122,9 +146,11 @@ export default function LoginPage() {
                 </button>
                 <p className="text-sm !mt-6 text-center text-slate-500">
                   Não têm uma conta?{' '}
-                  <a href="javascript:void(0);" className="text-[#963d40] font-medium hover:underline ml-1 whitespace-nowrap">
+                  <Link 
+                  href='/register'
+                  className='text-[#963d40] font-medium hover:underline ml-1 whitespace-nowrap'>
                     Registre-se Aqui
-                  </a>
+                  </Link>
                 </p>
               </div>
             </form>

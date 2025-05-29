@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Logo from '../../public/clipboard.webp'
+import Logo2 from '../../public/logo_app2.png'
 import Link from 'next/link'
+
 
 export default function Home() {
   return (
@@ -9,7 +11,7 @@ export default function Home() {
         <div className="w-full h-64 lg:w-1/2 lg:h-auto">
           <Image 
             src={Logo}
-            alt="Imagem da Logo"
+            alt="Imagem de Clipboard"
             width={600}
             className='h-full w-full object-cover'
           />
@@ -17,9 +19,15 @@ export default function Home() {
 
         <div className="rounded-4xl max-w-lg bg-white/20 bg-clip-padding backdrop-filter backdrop-blur-md border border-gray-100 md:max-w-2xl md:z-10 md:shadow-lg md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12">
           <div className="flex flex-col p-12 md:px-16">
-            <div className='flex flex-row gap-2 items-end'>
-              <h2 className="text-2xl font-medium text-white lg:text-4xl">Escutam</h2>
-              <span className='text-5xl font-extrabold text-white'>AQUI</span>
+            <div className='flex flex-row items-center'>
+              <Image 
+              src={Logo2}
+              alt='Imagem da Logo'
+              width={60}
+              quality={100}
+              className='gap-0 mr-3'/>
+              <h2 className="text-2xl font-medium mt-2 text-white lg:text-4xl">Escutam</h2>
+              <span className='text-5xl italic font-extrabold text-white'>AQUI</span>
             </div>
             <p className="mt-4 text-white w-9/12">
               Com apenas um registro rápido, você pode solicitar demanda para governos e acompanhar as atualizações de suas demanda.

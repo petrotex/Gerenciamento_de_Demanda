@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation'
 import CustomLoader from '@/componentes/loading/CustomLoad'
 import Image from 'next/image'
 import Logo from '@/../../public/logo_app.png'
-import Link from 'next/link'
-
 import DemandaCard from '@/componentes/demandacard'
 import { DemandaProps, ApiResponse } from '@/types/demandas';
 
@@ -14,6 +12,9 @@ export default function DemandasPage() {
   const [demandas, setDemandas] = useState<DemandaProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1); // página atual da visualização
+  const itemsPerPage = 3; // apenas 3 por vez no frontend
+
   const router = useRouter();
 
   useEffect(() => {
@@ -55,6 +56,11 @@ export default function DemandasPage() {
   if (loading) return <CustomLoader />;
   if (error) return <p>Erro: {error}</p>;
 
+  // Lógica de paginação no frontend
+  const totalPages = Math.ceil(demandas.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentDemandas = demandas.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div className="p-4">
       <div className='mt-4 mb-4 flex gap-0 justify-center'>
@@ -70,11 +76,40 @@ export default function DemandasPage() {
           <h1 className="text-3xl items-end mt-12 italic font-stretch-50% text-[#963d40]">DEMANDAS</h1>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-        {demandas.map((demanda) => (
+        {currentDemandas.map((demanda) => (
           <DemandaCard key={demanda.id} demanda={demanda} />
         ))}
+      </div>
+
+      {/* Paginação */}
+      <div className="flex justify-center mt-6 gap-4">
+        {/* Botão Anterior */}
+      <button
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+      className={`px-4 py-2 rounded transition text-white 
+        ${currentPage === 1 
+          ? 'bg-[#ccc] opacity-50 cursor-not-allowed' 
+          : 'bg-[#963d40] hover:bg-[#ba6063] cursor-pointer'}`}
+          >
+            Anterior
+      </button>
+      <span className="text-[#963d40] font-medium text-lg">
+        Página {currentPage} de {totalPages}
+        </span>
+      {/* Botão Próxima */}
+      <button
+      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+      disabled={currentPage === totalPages}
+      className={`px-4 py-2 rounded transition text-white 
+      ${currentPage === totalPages 
+        ? 'bg-[#ccc] opacity-50 cursor-not-allowed' 
+        : 'bg-[#963d40] hover:bg-[#ba6063] cursor-pointer'}`}
+        >
+          Próxima
+      </button>
       </div>
     </div>
   );
