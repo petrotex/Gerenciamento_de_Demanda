@@ -1,3 +1,5 @@
+from .filters import DemandaFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, generics
 from app import models
 from app.api import serializers
@@ -53,6 +55,9 @@ class DemandaViewSet(viewsets.ModelViewSet):
     queryset = models.Demanda.objects.all().order_by('id')
     serializer_class = serializers.DemandaSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DemandaFilter
 
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('id')

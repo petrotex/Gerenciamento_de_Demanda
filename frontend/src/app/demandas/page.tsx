@@ -1,5 +1,6 @@
 'use client'
 
+import SearchBar from '@/componentes/search';
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import CustomLoader from '@/componentes/loading/CustomLoad'
@@ -63,7 +64,7 @@ export default function DemandasPage() {
 
   return (
     <div className="p-4">
-      <div className='mt-4 mb-4 flex gap-0 justify-center'>
+      <div className='mt-4 mb-4 mr-37 flex gap-0 justify-center'>
         <h1 className="items-center text-3xl italic font-stretch-50% text-[#963d40]">BUSCANDO</h1>
         <div className="w-24 h-24 flex items-center"> 
           <Image 
@@ -77,6 +78,9 @@ export default function DemandasPage() {
         </div>
       </div>
 
+      <div className='mt-7'>
+        <SearchBar />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         {currentDemandas.map((demanda) => (
           <DemandaCard key={demanda.id} demanda={demanda} />

@@ -1,29 +1,22 @@
 'use client'
 
+import StatusCG from './components/statusCg';
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DemandaProps } from "@/types/demandas";
-import { redirect } from "next/navigation";
 import Image from 'next/image';
-import { Container } from '@/componentes/container';
-import { Label } from './components/label'
-import DemandaCard from '@/componentes/demandacard'
-import { Metadata } from "next";
-
-
-interface PropsParams{
-    params:{
-        id: string;
-    }
-}
 
 export default function DemandaPage() {
   const [data, setData] = useState<DemandaProps | null>(null);
   const router = useRouter();
-  const params = useParams(); // Obtenha os parâmetros desta forma
+  const params = useParams();
+
+  const handleStatusUpdate = (newStatus: string) => {
+    if (!data) return;
+    setData({ ...data, status: newStatus });
+  };
 
   useEffect(() => {
-    // Verifique se params está disponível
     if (!params?.id) return;
 
     const token = localStorage.getItem('token');
@@ -57,61 +50,110 @@ export default function DemandaPage() {
     };
 
     fetchData();
-  }, [params?.id, router]); // Use params?.id como dependência
+  }, [params?.id, router]);
 
   if (!data) return <div>Carregando...</div>;
 
-  return (
-    <div className="w-5/12 h-52 mx-auto mt-10 lg:flex border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* Parte da imagem (lado esquerdo) */}
-      <div className="h-80 lg:h-auto lg:w-80  flex-none bg-cover relative">
-        <Image
-      src={data.image}
-      alt={data.tipo}
-      fill
-      className="object-cover"
-      priority={true}
-      quality={100}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 44vw"
-    />
-  </div>
+  const formattedDate = new Date(data.created_at).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).replace(/\//g, '-');
 
-  {/* Parte do conteúdo (lado direito) */}
-  <div className="border-r border-b border-l border-gray-200 lg:border-l-0 lg:border-t lg:border-gray-200 bg-white p-4 flex flex-col justify-between leading-normal w-full">
-    <div className="mb-4">
-      {/* Status e Prioridade como badges */}
-      <div className="flex gap-2 mb-3">
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+return (
+  <div className="max-w-3xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+    <div className="mb-6 rounded-lg overflow-hidden h-64 relative">
+      <Image
+        src={data.image}
+        alt={data.tipo}
+        fill
+        className="object-cover"
+        priority={true}
+        quality={100}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 44vw"
+      />
+    </div>
+
+    <div className="mb-6">
+      <h1 className="text-2xl font-bold text-gray-800 mb-2">{data.tipo}</h1>
+      <div className="flex items-center gap-4">
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
           data.prior === 'Alta' ? 'bg-red-100 text-red-800' :
           data.prior === 'Média' ? 'bg-yellow-100 text-yellow-800' :
           'bg-green-100 text-green-800'
         }`}>
-          {data.prior}
+          Prioridade {data.prior}
         </span>
-        
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          data.status === 'Pendente' ? 'bg-blue-100 text-blue-800' :
-          data.status === 'Em andamento' ? 'bg-purple-100 text-purple-800' :
-          'bg-gray-100 text-gray-800'
+        <span className="text-gray-600 text-sm">Demanda feita em {formattedDate}</span>
+      </div>
+    </div>
+
+    <div className="mb-8 border-l-2 border-gray-200 pl-6 relative">
+      <div className={`mb-6 relative transition-all ${data.status !== 'planejando' ? 'opacity-50' : ''}`}>
+        <div className={`absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+          data.status === 'planejando' ? 'bg-[#383434]' : 'bg-[#6e6a6a]'
         }`}>
-          {data.status}
-        </span>
+          1
+        </div>
+        <div className="ml-4">
+          <h3 className={`font-semibold ${
+            data.status === 'planejando' ? 'text-gray-800' : 'text-gray-500'
+          }`}>Planejando</h3>
+          <p className={`${
+            data.status === 'planejando' ? 'text-gray-600' : 'text-gray-400'
+          }`}>Status Inicial da Demanda</p>
+        </div>
       </div>
 
-      {/* Informações principais */}
-      <h1 className="text-gray-900 font-bold text-xl mb-2">{data.tipo}</h1>
-      
-      <div className="space-y-1 text-gray-700 text-base">
-        <p><strong>Endereço:</strong> {data.endereco}</p>
-        <p><strong>Ponto de Referência:</strong> {data.ponto_referencia}</p>
+      <div className={`mb-6 relative transition-all ${data.status !== 'organizando' ? 'opacity-50' : ''}`}>
+        <div className={`absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+          data.status === 'organizando' ? 'bg-[#963d40]' : 'bg-[#b15f61]'
+        }`}>
+          2
+        </div>
+        <div className="ml-4">
+          <h3 className={`font-semibold ${
+            data.status === 'organizando' ? 'text-gray-800' : 'text-gray-500'
+          }`}>Organizando</h3>
+          <p className={`${
+            data.status === 'organizando' ? 'text-gray-600' : 'text-gray-400'
+          }`}>Equipe sendo Mobilizada para Preparar Solução</p>
+        </div>
+      </div>
+
+      <div className={`relative transition-all ${data.status !== 'solucionando' ? 'opacity-50' : ''}`}>
+        <div className={`absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+          data.status === 'solucionando' ? 'bg-green-500' : 'bg-green-300'
+        }`}>
+          3
+        </div>
+        <div className="ml-4">
+          <h3 className={`font-semibold ${
+            data.status === 'solucionando' ? 'text-gray-800' : 'text-gray-500'
+          }`}>Solucionando</h3>
+          <p className={`${
+            data.status === 'solucionando' ? 'text-gray-600' : 'text-gray-400'
+          }`}>Trabalho para Solucionar a Demanda em Andamento</p>
+        </div>
       </div>
     </div>
 
-    {/* Data de criação */}
-    <div className="text-sm text-gray-600">
-      <p><strong>Criado em:</strong> {new Date(data.created_at).toLocaleDateString()}</p>
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">Endereço</h2>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <p className="text-gray-800">{data.endereco}</p>
+          <p className="text-gray-600 mt-1">{data.ponto_referencia}</p>
+        </div>
+      </div>
+
+      {/* Controle de status */}
+      <div className="mt-6">
+        <StatusCG 
+          demandaId={params.id as string} 
+          initialStatus={data.status} 
+          onStatusUpdated={handleStatusUpdate}
+        />
+      </div>
     </div>
-  </div>
-</div>
-  )
+  );
 }
