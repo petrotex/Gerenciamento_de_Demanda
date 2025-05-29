@@ -1,0 +1,40 @@
+# ===================
+# Global (ambos)
+# ===================
+.env
+*.log
+.DS_Store
+Thumbs.db
+
+# ===================
+# Backend (Django)
+# ===================
+backendend/__pycache__/
+backendend/**/*.pyc
+backend/db.sqlite3
+backend/media/
+backend/staticfiles/
+backend/venv/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.coverage
+backend/coverage.xml
+
+# VS Code config (caso use)
+backend/.vscode/
+
+# ===================
+# FrontEnd (Next.js)
+# ===================
+Frontend/.next/
+Frontend/node_modules/
+Frontend/.env.local
+Frontend/.env.production
+Frontend/.env.development
+Frontend/.eslintcache
+Frontend/.turbo/
+Frontend/package-lock.json 
+Frontend/yarn.lock        
+
+# VS Code config (caso use)
+Frontend/.vscode/
