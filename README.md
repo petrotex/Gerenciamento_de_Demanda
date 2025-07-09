@@ -19,7 +19,7 @@ pip e npm/yarn
 
 🔧 Instalação
 🔁 Clonar o repositório
-git clone https://github.com/luanscolfaro/Fisc-Cec
+git clone https://github.com/petrotex/Gerenciamento_de_Demanda
 cd projeto-final
 
 🖥️ Backend (Django)
