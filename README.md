@@ -53,6 +53,6 @@ npm run dev
 =-=-=-=-=-=
 
 🗃️ API
-A documentação da API está disponível via Swagger em:
+A documentação da API ficará disponível via Swagger em:
 
 http://localhost:8000/swagger
